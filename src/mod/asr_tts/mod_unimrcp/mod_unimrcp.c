@@ -3688,6 +3688,14 @@ static apt_bool_t recog_on_message_receive(mrcp_application_t *application, mrcp
 					recog_channel_set_result_headers(schannel, recog_hdr);
 					recog_channel_set_results(schannel, result);
 				}
+				// lilong add customer event(unimrcp::asrend) begin
+				if (switch_event_create_subclass(&event,SWITCH_EVENT_CUSTOM,"unimrcp::asrend") == SWITCH_STATUS_SUCCESS)
+				{
+					switch_event_add_header_string(event, SWITCH_STACK_BOTTOM, "uuid", schannel->session_uuid);
+					switch_event_add_header_string(event, SWITCH_STACK_BOTTOM, "MRCP-Body", message->body.buf);
+					switch_event_fire(&event);
+				}
+				// lilong add customer event(unimrcp::asrend) end
 			} else {
 				char *completion_cause = switch_mprintf("Completion-Cause: %03d", recog_hdr->completion_cause);
 				switch_log_printf(SWITCH_CHANNEL_UUID_LOG(schannel->session_uuid), SWITCH_LOG_DEBUG, "(%s) No result\n", schannel->name);
